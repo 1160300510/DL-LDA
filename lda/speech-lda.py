@@ -56,34 +56,54 @@ if __name__ == '__main__':
     temp = dictionary[0]  # This is only to "load" the dictionary.
     id2word = dictionary.id2token
 
-    for i in range(5, 25):
-        num_topics = i
-        model = LdaModel(
-            corpus=corpus,
-            id2word=id2word,
-            chunksize=chunksize,
-            alpha='auto',
-            eta='auto',
-            iterations=iterations,
-            num_topics=num_topics,
-            passes=passes,
-            eval_every=eval_every
-        )
+    num_topics = 9
+    model = LdaModel(
+        corpus=corpus,
+        id2word=id2word,
+        chunksize=chunksize,
+        alpha='auto',
+        eta='auto',
+        iterations=iterations,
+        num_topics=num_topics,
+        passes=passes,
+        eval_every=eval_every
+    )
 
-        top_topics = model.top_topics(corpus)  # , num_words=20)
-        coherence_model_lda = CoherenceModel(model=model, texts=docs, corpus=corpus, dictionary=dictionary,
-                                             coherence='c_v')
-        coherence_lda = coherence_model_lda.get_coherence()
-        coherences.append(coherence_lda)
-        if coherence_lda > best_coherence:
-            best_num_topics = i
-            best_coherence = coherence_lda
-        # model.save('../model/nlp_10/nlp_10.model')
-        model.print_topics(num_topics=i, num_words=15)
+    top_topics = model.top_topics(corpus)  # , num_words=20)
+    coherence_model_lda = CoherenceModel(model=model, texts=docs, corpus=corpus, dictionary=dictionary,
+                                         coherence='c_v')
+    coherence_lda = coherence_model_lda.get_coherence()
+    model.save('../model/speech_9/speech_9.model')
+    model.print_topics(num_topics=num_topics, num_words=15)
 
-    print("best coherence: " + str(best_coherence))
-    print("best topic nums: " + str(best_num_topics))
-    print(coherences)
+    # for i in range(5, 25):
+    #     num_topics = i
+    #     model = LdaModel(
+    #         corpus=corpus,
+    #         id2word=id2word,
+    #         chunksize=chunksize,
+    #         alpha='auto',
+    #         eta='auto',
+    #         iterations=iterations,
+    #         num_topics=num_topics,
+    #         passes=passes,
+    #         eval_every=eval_every
+    #     )
+    #
+    #     top_topics = model.top_topics(corpus)  # , num_words=20)
+    #     coherence_model_lda = CoherenceModel(model=model, texts=docs, corpus=corpus, dictionary=dictionary,
+    #                                          coherence='c_v')
+    #     coherence_lda = coherence_model_lda.get_coherence()
+    #     coherences.append(coherence_lda)
+    #     if coherence_lda > best_coherence:
+    #         best_num_topics = i
+    #         best_coherence = coherence_lda
+    #     # model.save('../model/nlp_10/nlp_10.model')
+    #     model.print_topics(num_topics=i, num_words=15)
+    #
+    # print("best coherence: " + str(best_coherence))
+    # print("best topic nums: " + str(best_num_topics))
+    # print(coherences)
     # df = pd.read_csv('../preprocess/speech-process.csv')
     # docs = []
     # for index, row in df.iterrows():

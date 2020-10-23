@@ -1,3 +1,5 @@
 多层感知器(MLP): mlp; multilayer perceptron; multiple layers; non-linear activation
-循环神经网络(RNN): rnn; recurrent-neural-network; lstm; fully recurrent; elman networks; jordan networks; hopfield; echo state; recursive neural network; gru
-卷积神经网络(CNN): cnn; conv-neural-network; convolution; convnet; receptive field; 
+循环神经网络(RNN): rnn; recurrent-neural-network; lstm; fully recurrent; elman networks; jordan networks; hopfield; echo state; recursive neural network; gru; esn; neural turing machine; memory network
+卷积神经网络(CNN): cnn; conv-neural-network; convolution; convnet; receptive field; shift invariant; lenet; alexnet; googlenet; vgg-net; zf net; resnet; r-cnn; 
+生成式对抗网络(GANs): generative-adversarial-network; gan; GANs; stylegan
+强化学习(Reinforcement learning): reinforcement-learning; montecarlo; monte carlo; q-learning; sarsa; dqn; ddpg; a3c; trpo; ppo; td3; sac; transfer-learning
