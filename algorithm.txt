@@ -1,0 +1,2 @@
+多层感知器(MLP): mlp; multilayer perceptron; multiple layers; non-linear activation
+循环神经网络(RNN): 
