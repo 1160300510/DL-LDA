@@ -11,14 +11,20 @@ from pprint import pprint
 import numpy as np
 import logging
 from gensim.models import CoherenceModel
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+# logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 if __name__ == '__main__':
 
     df = pd.read_csv('mynltk.csv')
     docs = []
     for index, row in df.iterrows():
-        body = pre.preprocess(row['Body'])
-        docs.append(body)
+        title = str(row['Title'])
+        tags = str(row['Tags'])
+        body = str(row['Body'])
+        title = pre.processbody(title)
+        body = pre.processbody(body)
+        tags = pre.preprocesstag(tags)
+        doc = title + " " + tags + " " + body
+        docs.append(doc)
     print(len(docs))
     print(docs[0][:50])
 
@@ -32,16 +38,19 @@ if __name__ == '__main__':
 
     # Remove words that are only one character.
     docs = [[token for token in doc if len(token) > 1] for doc in docs]
+    np.save('nltk_docs.npy', np.array(docs))
+    # docs = np.load('nltk_docs.npy', allow_pickle=True).tolist()
 
     # Create a dictionary representation of the documents.
     dictionary = Dictionary(docs)
     dictionary.save('mynltk.dict')
-    # dictionary = Dictionary.load('../data/nlp.dict')
+    # dictionary = Dictionary.load('mynltk.dict')
+    dictionary.filter_extremes(no_below=10, no_above=0.8)
 
     # Bag-of-words representation of the documents.
     corpus = [dictionary.doc2bow(doc) for doc in docs]
     np.save('mynltk.npy', np.array(corpus))
-    # corpus = np.load('../data/nlp_corpus.npy').tolist()
+    # corpus = np.load('mynltk.npy', allow_pickle=True).tolist()
     print('Number of unique tokens: %d' % len(dictionary))
     # print('Number of documents: %d' % len(corpus))
     # %%
@@ -56,37 +65,38 @@ if __name__ == '__main__':
     # # Make a index to word dictionary.
     temp = dictionary[0]  # This is only to "load" the dictionary.
     id2word = dictionary.id2token
-    for i in range(5, 15):
+    # for i in range(10, 30):
+    #
+    #     num_topics = i
+    #     model = LdaModel(
+    #         corpus=corpus,
+    #         id2word=id2word,
+    #         chunksize=chunksize,
+    #         alpha='auto',
+    #         eta='auto',
+    #         iterations=iterations,
+    #         num_topics=num_topics,
+    #         passes=passes,
+    #         eval_every=eval_every
+    #     )
+    #
+    #     top_topics = model.top_topics(corpus)  # , num_words=20)
+    #     coherence_model_lda = CoherenceModel(model=model, texts=docs, corpus=corpus, dictionary=dictionary, coherence='c_v')
+    #     coherence_lda = coherence_model_lda.get_coherence()
+    #
+    #     coherences.append(coherence_lda)
+    #     if coherence_lda > best_coherence:
+    #         best_num_topics = i
+    #         best_coherence = coherence_lda
+    #         # model.save('../model/nlp_10/nlp_10.model')
+    #     topicwords = model.print_topics(num_topics=i, num_words=15)
+    #     pprint(topicwords)
+    #
+    # print("best coherence: " + str(best_coherence))
+    # print("best topic nums: " + str(best_num_topics))
+    # print(coherences)
 
-        num_topics = i
-        model = LdaModel(
-            corpus=corpus,
-            id2word=id2word,
-            chunksize=chunksize,
-            alpha='auto',
-            eta='auto',
-            iterations=iterations,
-            num_topics=num_topics,
-            passes=passes,
-            eval_every=eval_every
-        )
-
-        top_topics = model.top_topics(corpus)  # , num_words=20)
-        coherence_model_lda = CoherenceModel(model=model, texts=docs, corpus=corpus, dictionary=dictionary, coherence='c_v')
-        coherence_lda = coherence_model_lda.get_coherence()
-
-        coherences.append(coherence_lda)
-        if coherence_lda > best_coherence:
-            best_num_topics = i
-            best_coherence = coherence_lda
-            # model.save('../model/nlp_10/nlp_10.model')
-        model.print_topics(num_topics=i, num_words=15)
-
-    print("best coherence: " + str(best_coherence))
-    print("best topic nums: " + str(best_num_topics))
-    print(coherences)
-
-    num_topics = best_num_topics
+    num_topics = 12
     model = LdaModel(
         corpus=corpus,
         id2word=id2word,
@@ -102,5 +112,6 @@ if __name__ == '__main__':
     coherence_model_lda = CoherenceModel(model=model, texts=docs, corpus=corpus, dictionary=dictionary, coherence='c_v')
     coherence_lda = coherence_model_lda.get_coherence()
     # model.save('../model/nlp_nltk/nlp_nltk.model')
-    model.print_topics(num_topics=best_num_topics, num_words=15)
+    topicwords = model.print_topics(num_topics=num_topics, num_words=15)
+    pprint(topicwords)
     print(coherence_lda)
