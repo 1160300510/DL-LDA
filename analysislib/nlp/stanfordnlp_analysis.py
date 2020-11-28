@@ -11,7 +11,7 @@ from pprint import pprint
 import numpy as np
 import logging
 from gensim.models import CoherenceModel
-# logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 if __name__ == '__main__':
 
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     top_topics = model.top_topics(corpus)  # , num_words=20)
     coherence_model_lda = CoherenceModel(model=model, texts=docs, corpus=corpus, dictionary=dictionary, coherence='c_v')
     coherence_lda = coherence_model_lda.get_coherence()
-    model.save('nlp_stanfordnlp_5.model')
+    model.save('nlp_stanfordnlp_7.model')
     topicwords = model.print_topics(num_topics=num_topics, num_words=15)
     pprint(topicwords)
     print(coherence_lda)

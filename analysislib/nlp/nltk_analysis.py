@@ -14,43 +14,43 @@ from gensim.models import CoherenceModel
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 if __name__ == '__main__':
 
-    df = pd.read_csv('mynltk.csv')
-    docs = []
-    for index, row in df.iterrows():
-        title = str(row['Title'])
-        tags = str(row['Tags'])
-        body = str(row['Body'])
-        title = pre.processbody(title)
-        body = pre.processbody(body)
-        tags = pre.preprocesstag(tags)
-        doc = title + " " + tags + " " + body
-        docs.append(doc)
-    print(len(docs))
-    print(docs[0][:50])
-
-    # Split the documents into tokens.
-    tokenizer = RegexpTokenizer(r'\w+')
-    for idx in range(len(docs)):
-        docs[idx] = tokenizer.tokenize(docs[idx])  # Split into words.
-
-    # Remove numbers, but not words that contain numbers.
-    docs = [[token for token in doc if not token.isnumeric()] for doc in docs]
-
-    # Remove words that are only one character.
-    docs = [[token for token in doc if len(token) > 1] for doc in docs]
-    np.save('nltk_docs.npy', np.array(docs))
-    # docs = np.load('nltk_docs.npy', allow_pickle=True).tolist()
+    # df = pd.read_csv('mynltk.csv')
+    # docs = []
+    # for index, row in df.iterrows():
+    #     title = str(row['Title'])
+    #     tags = str(row['Tags'])
+    #     body = str(row['Body'])
+    #     title = pre.processbody(title)
+    #     body = pre.processbody(body)
+    #     tags = pre.preprocesstag(tags)
+    #     doc = title + " " + tags + " " + body
+    #     docs.append(doc)
+    # print(len(docs))
+    # print(docs[0][:50])
+    #
+    # # Split the documents into tokens.
+    # tokenizer = RegexpTokenizer(r'\w+')
+    # for idx in range(len(docs)):
+    #     docs[idx] = tokenizer.tokenize(docs[idx])  # Split into words.
+    #
+    # # Remove numbers, but not words that contain numbers.
+    # docs = [[token for token in doc if not token.isnumeric()] for doc in docs]
+    #
+    # # Remove words that are only one character.
+    # docs = [[token for token in doc if len(token) > 1] for doc in docs]
+    # np.save('nltk_docs.npy', np.array(docs))
+    docs = np.load('nltk_docs.npy', allow_pickle=True).tolist()
 
     # Create a dictionary representation of the documents.
-    dictionary = Dictionary(docs)
-    dictionary.save('mynltk.dict')
-    # dictionary = Dictionary.load('mynltk.dict')
+    # dictionary = Dictionary(docs)
+    # dictionary.save('mynltk.dict')
+    dictionary = Dictionary.load('mynltk.dict')
     dictionary.filter_extremes(no_below=10, no_above=0.8)
 
     # Bag-of-words representation of the documents.
-    corpus = [dictionary.doc2bow(doc) for doc in docs]
-    np.save('mynltk.npy', np.array(corpus))
-    # corpus = np.load('mynltk.npy', allow_pickle=True).tolist()
+    # corpus = [dictionary.doc2bow(doc) for doc in docs]
+    # np.save('mynltk.npy', np.array(corpus))
+    corpus = np.load('mynltk.npy', allow_pickle=True).tolist()
     print('Number of unique tokens: %d' % len(dictionary))
     # print('Number of documents: %d' % len(corpus))
     # %%
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     top_topics = model.top_topics(corpus)  # , num_words=20)
     coherence_model_lda = CoherenceModel(model=model, texts=docs, corpus=corpus, dictionary=dictionary, coherence='c_v')
     coherence_lda = coherence_model_lda.get_coherence()
-    # model.save('../model/nlp_nltk/nlp_nltk.model')
+    model.save('nlp_nltk_12_5.model')
     topicwords = model.print_topics(num_topics=num_topics, num_words=15)
     pprint(topicwords)
     print(coherence_lda)
