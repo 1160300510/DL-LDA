@@ -84,18 +84,22 @@ def preprocess(str):
     wordlemmas = []
     for word in words:
         word = lemma.lemmatize(word)
-        # word = stem.stem(word)
+        word = stem.stem(word)
         wordlemmas.append(word)
-    #英语停用词
+    #英语停用词和常用词
     english_stopwords = stopwords.words("english")
+    commonworsd = ["word", "list", "using", "use", "like", "want", "get", "would", "follow", "tri", "word", "wa", "edu"
+        , "com", "http", "way", "web"]
     words_stopwordsremoved = []
     for word in wordlemmas:
-        if word not in english_stopwords:
+        if word not in english_stopwords and word not in commonworsd:
             words_stopwordsremoved.append(word)
     result = ''
     for word in words_stopwordsremoved:
         result += ' ' + word
     return result.strip()
+
+
 #处理post的body部分
 def processbody(str):
     str = replaceCharEntity(str)
@@ -113,6 +117,7 @@ def preprocesstag(str):
         tag += s + ' '
     tag = tag[:-1]
     return tag
+
 
 if __name__ == '__main__':
     df = pd.read_csv('../data/nlp.csv')
